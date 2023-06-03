@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const MY_KEY = '30898532-07677536b584d5a486c7433f6';
-const axios.defaults.baseURL ='https://pixabay.com/api/'
+axios.defaults.baseURL ='https://pixabay.com/api/'
 
 // 'https://${basicURL}/?q=${query}=${MY_KEY}&image_type=photo&orientation=horizontal&per_page=12'
 

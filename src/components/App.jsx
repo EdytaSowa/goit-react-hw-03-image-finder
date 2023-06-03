@@ -1,4 +1,5 @@
 import { Searchbar } from "./Searchbar/Searchbar";
+// import {getFetchData} from "../api"
 
 export const App = () => {
   return (
@@ -12,7 +13,7 @@ export const App = () => {
         color: '#010101'
       }}
     >
-
+     
       <Searchbar/>
    
     </div>
