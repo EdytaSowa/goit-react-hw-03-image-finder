@@ -11,16 +11,19 @@ export class Searchbar extends Component {
   handleChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
+
   };
 
-  handleSubmit = async e =>  {
+  handleSubmit =  e =>  {
     e.preventDefault();
-
+    this.props.handleSubmit(this.state);
+    
+    this.setState({query: ''});
 };
 
-  
 
   render() {
+    const query = this.state.query;
     return (
       <>
         <header className="searchbar">
@@ -32,6 +35,7 @@ export class Searchbar extends Component {
             <input
               onChange={this.handleChange}
               name="query"
+              value={query}
               className="input"
               type="text"
               autoComplete="off"
