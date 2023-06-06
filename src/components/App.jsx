@@ -16,6 +16,7 @@ export class App extends Component {
     isPaginationShow: false,
     urlImageModal: '',
     isModalShow: false,
+    error: '',
   };
 
   onClick = async () => {
@@ -34,12 +35,11 @@ export class App extends Component {
   };
 
   onModalClose = () => {
-   this.setState({isModalShow: false})
-  }
-
+    this.setState({ isModalShow: false });
+  };
 
   onImageClick = e => {
-    this.setState({isModalShow: true})
+    this.setState({ isModalShow: true });
     const url = e.target.name;
     this.setState({ urlImageModal: url });
   };
@@ -51,12 +51,23 @@ export class App extends Component {
 
     const query = e.target.elements.query.value;
 
-    const images = await getFetchData(query, this.state.page);
-    this.setState({ images: images });
-    this.setState({ query: query });
-    this.setState({ isLoading: false });
-    this.setState({ isPaginationShow: true });
-    // console.log(images);
+    // const images = await getFetchData(query, this.state.page);
+
+    try {
+      const images = await getFetchData(query, this.state.page);
+      this.setState({ images: images });
+      this.setState({ query: query });
+      this.setState({ isLoading: false });
+      this.setState({ isPaginationShow: true });
+    } catch (err) {
+      this.setState({ error: err });
+    } finally {
+      this.setState({ isLoading: false });
+    }
+
+    /* this.setState({ error: err });
+    
+    */
 
     // try {
     //   const images = await getFetchData(query);
@@ -65,14 +76,10 @@ export class App extends Component {
     //   this.setState({isLoading: false})
     //   console.log(images);
     // } catch (err) {
-    //   this.setState({ error: err });
+    //
     // } finally {
     //   this.setState({ loading: false });
     // }
-
-    // this.getImages(this.state.query);
-
-    // const images = getFetchData(this.state.query);
 
     // console.log( this.state.images);
   };
@@ -121,7 +128,12 @@ export class App extends Component {
           onImageClick={this.onImageClick}
         />
 
-        {!this.state.isModalShow ? null : (<Modal url={this.state.urlImageModal} closeModal={this.onModalClose} />)}
+        {!this.state.isModalShow ? null : (
+          <Modal
+            url={this.state.urlImageModal}
+            closeModal={this.onModalClose}
+          />
+        )}
 
         {this.state.images.length === 0 ? null : (
           <Button onClick={this.onClick} />
