@@ -1,13 +1,11 @@
-import { Component } from 'react';
+import css from './Modal.module.css';
 
-export class Modal extends Component {
-  render() {
-    return (
-      <div className="overlay">
-        <div className="modal">
-          <img src="" alt="" />
-        </div>
+export const Modal = ({ url, closeModal }) => {
+  return (
+    <div onClick={closeModal} className={css.Overlay}>
+      <div className={css.Modal}>
+        <img src={url} alt="" />
       </div>
-    );
-  }
-}
+    </div>
+  );
+};

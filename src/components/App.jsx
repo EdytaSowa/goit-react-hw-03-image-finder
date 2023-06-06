@@ -3,18 +3,46 @@ import { Component } from 'react';
 import { getFetchData } from './api/api';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { Button } from './Button/Button';
+import { Modal } from './Modal/Modal';
+
+import { Bars } from 'react-loader-spinner';
 
 export class App extends Component {
   state = {
     query: '',
     images: [],
     isLoading: false,
-    
+    page: 1,
+    isPaginationShow: false,
+    urlImageModal: '',
+    isModalShow: false,
   };
 
-  onClick = () => {
-    console.log('hejka');
+  onClick = async () => {
+    const images = this.state.images;
+    console.log(this.state.page);
+
+    const imagesAfterPagination = await getFetchData(
+      this.state.query,
+      this.state.page + 1
+    );
+
+    this.setState(prevState => ({ page: prevState.page + 1 }));
+
+    this.setState({ images: [...images, ...imagesAfterPagination] });
+    // console.log(imagesAfterPagination);
+  };
+
+  onModalClose = () => {
+   this.setState({isModalShow: false})
   }
+
+
+  onImageClick = e => {
+    this.setState({isModalShow: true})
+    const url = e.target.name;
+    this.setState({ urlImageModal: url });
+  };
 
   onSubmit = async e => {
     e.preventDefault();
@@ -23,11 +51,12 @@ export class App extends Component {
 
     const query = e.target.elements.query.value;
 
-    const images = await getFetchData(query);
+    const images = await getFetchData(query, this.state.page);
     this.setState({ images: images });
     this.setState({ query: query });
     this.setState({ isLoading: false });
-    console.log(images);
+    this.setState({ isPaginationShow: true });
+    // console.log(images);
 
     // try {
     //   const images = await getFetchData(query);
@@ -74,8 +103,30 @@ export class App extends Component {
         }}
       >
         <Searchbar onSubmit={this.onSubmit} />
-        <ImageGallery images={this.state.images} />
-        <Button onClick={this.onClick}/>
+
+        {this.state.isLoading ? (
+          <Bars
+            height="80"
+            width="80"
+            color="#3f51b5"
+            ariaLabel="bars-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+        ) : null}
+
+        <ImageGallery
+          images={this.state.images}
+          onImageClick={this.onImageClick}
+        />
+
+        {!this.state.isModalShow ? null : (<Modal url={this.state.urlImageModal} closeModal={this.onModalClose} />)}
+
+        {this.state.images.length === 0 ? null : (
+          <Button onClick={this.onClick} />
+        )}
+        {/* {this.state.isPaginationShow ? <Button onClick={this.onClick} /> : null} */}
       </div>
     );
   }
