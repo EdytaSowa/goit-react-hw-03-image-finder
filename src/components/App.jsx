@@ -19,9 +19,13 @@ export class App extends Component {
     error: '',
   };
 
-  onClick = async () => {
+  /* TO DO: OGRANICZENIE DLA WIDOCZNOŚCI PRZYCISKU GDY NIE MA WIĘCEJ WYNIKÓW   */
+
+  onClickMore = async () => {
     const images = this.state.images;
-    console.log(this.state.page);
+    // console.log(this.state.page);
+
+    /* TO DO: TRY CATCH   */
 
     const imagesAfterPagination = await getFetchData(
       this.state.query,
@@ -136,7 +140,7 @@ export class App extends Component {
         )}
 
         {this.state.images.length === 0 ? null : (
-          <Button onClick={this.onClick} />
+          <Button onClick={this.onClickMore} />
         )}
         {/* {this.state.isPaginationShow ? <Button onClick={this.onClick} /> : null} */}
       </div>
