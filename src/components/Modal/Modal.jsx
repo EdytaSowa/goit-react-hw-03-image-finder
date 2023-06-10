@@ -1,4 +1,5 @@
-import css from './Modal.module.css';
+import css from './Modal.module.css'
+import PropTypes from 'prop-types'
 
 export const Modal = ({ url, closeModal }) => {
   return (
@@ -9,3 +10,10 @@ export const Modal = ({ url, closeModal }) => {
     </div>
   );
 };
+
+
+
+Modal.propTypes = {
+  closeModal: PropTypes.func,
+  url: PropTypes.string,
+}

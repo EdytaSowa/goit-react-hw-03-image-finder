@@ -17,25 +17,28 @@ export class App extends Component {
     urlImageModal: '',
     isModalShow: false,
     error: '',
+    imagesAfterPagination: 0,
   };
 
-  /* TO DO: OGRANICZENIE DLA WIDOCZNOŚCI PRZYCISKU GDY NIE MA WIĘCEJ WYNIKÓW   */
-
   onClickMore = async () => {
+    this.setState({ isLoading: true });
+
     const images = this.state.images;
-    // console.log(this.state.page);
 
-    /* TO DO: TRY CATCH   */
-
-    const imagesAfterPagination = await getFetchData(
-      this.state.query,
-      this.state.page + 1
-    );
-
-    this.setState(prevState => ({ page: prevState.page + 1 }));
-
-    this.setState({ images: [...images, ...imagesAfterPagination] });
-    // console.log(imagesAfterPagination);
+    try {
+      const imagesAfterPagination = await getFetchData(
+        this.state.query,
+        this.state.page + 1
+      );
+      this.setState({ imagesAfterPagination: imagesAfterPagination });
+      this.setState(prevState => ({ page: prevState.page + 1 }));
+      this.setState({ images: [...images, ...imagesAfterPagination] });
+      this.setState({ isLoading: false });
+    } catch (err) {
+      this.setState({ error: err });
+    } finally {
+      this.setState({ isLoading: false });
+    }
   };
 
   onModalClose = () => {
@@ -52,6 +55,7 @@ export class App extends Component {
     e.preventDefault();
 
     this.setState({ isLoading: true });
+    this.setState({ imagesAfterPagination: 0 });
 
     const query = e.target.elements.query.value;
 
@@ -68,40 +72,7 @@ export class App extends Component {
     } finally {
       this.setState({ isLoading: false });
     }
-
-    /* this.setState({ error: err });
-    
-    */
-
-    // try {
-    //   const images = await getFetchData(query);
-    //   this.setState({ images: images });
-    //   this.setState({ query: query });
-    //   this.setState({isLoading: false})
-    //   console.log(images);
-    // } catch (err) {
-    //
-    // } finally {
-    //   this.setState({ loading: false });
-    // }
-
-    // console.log( this.state.images);
   };
-
-  // getImages = async query => {
-  //   this.setState({ loading: true });
-  //   try {
-  //     const images = await getFetchData(query);
-
-  //     this.setState({ images: images });
-  //     this.setState({ query: value });
-  //     console.log(images);
-  //   } catch (err) {
-  //     this.setState({ error: err });
-  //   } finally {
-  //     this.setState({ loading: false });
-  //   }
-  // };
 
   render() {
     return (
@@ -117,8 +88,8 @@ export class App extends Component {
 
         {this.state.isLoading ? (
           <Bars
-            height="80"
-            width="80"
+            height="300"
+            width="300"
             color="#3f51b5"
             ariaLabel="bars-loading"
             wrapperStyle={{}}
@@ -139,9 +110,23 @@ export class App extends Component {
           />
         )}
 
-        {this.state.images.length === 0 ? null : (
+        {this.state.imagesAfterPagination.length < 12 ||
+        this.state.images.length === 0 ? null : this.state.isLoading ? (
+          <Bars
+            height="800"
+            width="800"
+            color="#3f51b5"
+            ariaLabel="bars-loading"
+            wrapperStyle={{}}
+            wrapperClass=""
+            visible={true}
+          />
+        ) : (
           <Button onClick={this.onClickMore} />
         )}
+        {/* {this.state.images.length === 0 ? null : (
+          <Button onClick={this.onClickMore} />
+        )} */}
         {/* {this.state.isPaginationShow ? <Button onClick={this.onClick} /> : null} */}
       </div>
     );
